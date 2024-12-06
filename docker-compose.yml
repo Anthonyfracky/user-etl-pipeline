@@ -1,0 +1,36 @@
+services:
+  app:
+    build: .
+    depends_on:
+      - db
+    volumes:
+      - ./data.csv:/app/data.csv
+      - ./queries:/queries
+      - .:/app
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - PYTHONUNBUFFERED=1
+    networks:
+      - app-network
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: users_db
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./queries:/queries
+    networks:
+      - app-network
+
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

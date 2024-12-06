@@ -35,8 +35,8 @@ This application processes user data from a CSV file and stores it in a PostgreS
 
 1. Clone the repository:
 ```bash
-git clone <https://github.com/Anthonyfracky/users-etl-pipeline>
-cd <users-etl-pipeline>
+git clone https://github.com/Anthonyfracky/user-etl-pipeline
+cd user-etl-pipeline
 ```
 
 2. The repository includes a sample data.csv file generated using the Faker library. You can use this file for testing or replace it with your own data following the same structure:

@@ -70,6 +70,10 @@ You can connect to the database using:
 ```bash
 docker-compose exec db psql -U postgres -d users_db
 ```
+### Running SQL queries from files:
+```bash
+docker-compose exec db psql -U postgres users_db -f /queries/query1.sql
+```
 
 ## Included SQL Queries
 

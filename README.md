@@ -1,35 +1,36 @@
-# User Data Processing Application
+# User Data Import Project
 
 This application processes user data from a CSV file and stores it in a PostgreSQL database using SQLAlchemy. It includes data validation, error handling, and database migrations using Alembic.
 
 ## Project Structure
-
 ```
-.
-├── alembic/
-│   ├── versions/
-│   └── env.py
-├── queries/
+project-root/
+│
+├── data.csv               # Input CSV file with user data
+├── main.py                # Main application script for data processing
+├── docker-compose.yml     # Docker Compose configuration
+├── Dockerfile             # Instructions to build the application Docker image
+├── requirements.txt       # Python dependencies
+├── start.sh               # Startup script for database initialization
+│
+├── alembic/               # Database migration configuration
+│   ├── env.py
+│   └── versions/
+│
+├── queries/               # Predefined SQL query files
 │   ├── query1.sql
 │   ├── query2.sql
 │   ├── query3.sql
 │   ├── query4.sql
 │   └── query5.sql
-├── data.csv
-├── alembic.ini
-├── docker-compose.yml
-├── Dockerfile
-├── init_migrations.sh
-├── main.py
-├── README.md
-└── requirements.txt
+│
+└── README.md              # Project documentation
 ```
 
 ## Prerequisites
-
 - Docker
 - Docker Compose
-- Git
+- Python 3.8+
 
 ## Installation
 
@@ -39,42 +40,35 @@ git clone https://github.com/Anthonyfracky/user-etl-pipeline
 cd user-etl-pipeline
 ```
 
-2. The repository includes a sample data.csv file generated using the Faker library. You can use this file for testing or replace it with your own data following the same structure:
-```csv
-user_id,name,email,signup_date
-1,John Doe,john@example.com,2024-01-01 10:00:00
-```
+2. Ensure you have Docker and Docker Compose installed on your system.
 
 ## Running the Application
 
-1. Build and start the containers:
+1. Build and start the application:
 ```bash
 docker-compose up --build
 ```
 
-2. Initialize the database and run migrations (first time only):
-```bash
-docker-compose run migrations
-```
-
-3. The application will automatically:
-   - Run database migrations
-   - Process the data.csv file
-   - Import the data into PostgreSQL
+This command will:
+- Build the Docker containers
+- Wait for the PostgreSQL database to be ready
+- Run database migrations
+- Import user data from `data.csv` into the database
 
 ## Accessing the Database
 
-You can access the PostgreSQL database in several ways:
+### Database Connection Details
+- **Host:** localhost
+- **Port:** 5432
+- **Database Name:** users_db
+- **Username:** postgres
+- **Password:** password
 
-### Using psql in the container:
-```bash
-docker-compose exec db psql -U postgres users_db
-```
+### Connecting to the Database
+You can connect to the database using:
 
-### Running SQL queries from files:
 ```bash
-# Run a specific query
-docker-compose exec db psql -U postgres users_db -f /queries/query1.sql
+docker-compose exec db psql -U postgres -d users_db
 ```
 
 ## Included SQL Queries
@@ -129,18 +123,28 @@ The project includes several SQL queries in the `queries/` directory:
    WHERE domain NOT IN ('gmail.com', 'yahoo.com', 'ukr.net');
    ```
 
-## Development
+To run these queries, connect to the database and use standard PostgreSQL query execution.
 
-### Adding New Migrations
+## Data Processing Details
 
-To create a new migration:
-```bash
-docker-compose run app alembic revision --autogenerate -m "Description of changes"
-```
+### Input Data
+- Expects a CSV file (`data.csv`) with columns:
+  - `user_id`
+  - `name`
+  - `email`
+  - `signup_date`
 
-### Running Migrations
+### Data Validation
+- Email addresses are validated using a regex pattern
+- Signup dates are parsed and standardized
+- Invalid entries are logged and skipped
 
-To apply migrations:
-```bash
-docker-compose run app alembic upgrade head
-```
+## Logging
+Application logs are output to the console, providing information about:
+- Data processing
+- Database operations
+- Any errors encountered during import
+
+## Notes
+- Ensure `data.csv` is in the correct format before running
+- The application will skip entries with invalid email formats
